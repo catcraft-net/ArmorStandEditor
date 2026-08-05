@@ -3,7 +3,8 @@
 #
 
 #NOTE from Author:
-# Do NOT Add CustomColors to icons (PresetMenu) as it will break how presets work and do the translation
+# Do NOT Add CustomColors to icons (PresetMenu or SizeMenu) as it will break how presets work and do the translation
+# Please change the info number if you want to mess with the color of those - It will change it globally however.
 
 iconname: 2n
 icondescription: 5
@@ -119,6 +120,8 @@ nomodecom:
   msg: Musisz wybrać tryb.
 nogive:
   msg: You have no permission to use the give command!
+blackGlassClick:
+  msg: Clicking this item will have no effect. Please choose another item.
 
 #menutitle
 mainmenutitle:

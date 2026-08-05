@@ -18,34 +18,60 @@
  */
 package io.github.rypofalem.armorstandeditor.protections;
 
-import com.palmergames.bukkit.towny.TownyAPI;
-import com.palmergames.bukkit.towny.event.executors.TownyActionEventExecutor;
+import io.github.rypofalem.armorstandeditor.ArmorStandEditorPlugin;
+import io.github.rypofalem.armorstandeditor.Debug;
 
-import io.github.rypofalem.armorstandeditor.api.Protection;
+import com.palmergames.bukkit.towny.event.executors.TownyActionEventExecutor;
+import com.palmergames.bukkit.towny.TownyAPI;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 
 //FIX for https://github.com/Wolfieheart/ArmorStandEditor-Issues/issues/15
 public class TownyProtection implements Protection {
     private final boolean tEnabled;
-
+    private Debug debug;
+    private ArmorStandEditorPlugin plugin;
 
     public TownyProtection() {
+        plugin = ArmorStandEditorPlugin.instance();
+        debug = plugin.debug;
         tEnabled = Bukkit.getPluginManager().isPluginEnabled("Towny");
     }
 
-    public boolean checkPermission(Block block, Player player) {
-        if (!tEnabled) return true;
-        if (player.isOp()) return true;
-        if (player.hasPermission("asedit.ignoreProtection.towny")) return true; //Add Additional Permission
+    @Override
+    public boolean checkPermission(Entity entity, Player player) {
 
+        // Bypasses - Towny is not detected, Player is Op or has Bypass Perms
+        if (!tEnabled || player.isOp() || player.hasPermission("asedit.ignoreProtection.towny")) return true;
+
+        TownyAPI towny = TownyAPI.getInstance();
         Location playerLoc = player.getLocation();
 
-        if (TownyAPI.getInstance().isWilderness(playerLoc)) return false;
-        return TownyActionEventExecutor.canDestroy(player, block.getLocation(), Material.ARMOR_STAND);
+        // --- entity checks ---
+        Material materialOfEntityBeingEdited;
+        if (entity instanceof ArmorStand) {
+            materialOfEntityBeingEdited = Material.ARMOR_STAND;
+        } else if (entity instanceof ItemFrame) {
+            materialOfEntityBeingEdited = entity instanceof GlowItemFrame ? Material.GLOW_ITEM_FRAME : Material.ITEM_FRAME;
+        } else {
+            return true;
+        }
+        debug.log("Editing " + materialOfEntityBeingEdited + ": " + entity.getUniqueId());
+
+        // --- wilderness checks ---
+        if (towny.isWilderness(playerLoc)) {
+            if (player.hasPermission("asedit.townyProtection.canEditInWild")) {
+                debug.log("User '" + player.getName() + "' is in the Wilderness and has the permission asedit.townyProtection.canEditInWild set to TRUE. Edits are allowed!");
+                return true;
+            } else {
+                player.sendMessage(plugin.getLang().getMessage("townyNoWildEdit", "warn"));
+                return false;
+            }
+        }
+        return TownyActionEventExecutor.canBuild(player, entity.getLocation(), materialOfEntityBeingEdited);
     }
 }
 

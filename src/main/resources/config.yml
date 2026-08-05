@@ -2,9 +2,6 @@
 #   ArmorStandEditor-Reborn   #
 #-----------------------------#
 
-#DO NOT CHANGE THIS - CHANGES AUTOMATICALLY PER UPDATE
-version: "1.21.1-47.2"
-
 #----------- LANGUAGE
 #Name of the language file you wish to use
 
@@ -63,7 +60,8 @@ toolLore:
 #Also please if you are using this, ensure that you also give people the ability asedit.give in
 #order to allow them to change their edit tool for the right Custom Model Data
 allowCustomModelData: false
-customModelDataInt: 0
+customModelDataInt: 0.0
+
 
 #----------- ARMOR STAND SPECIFICS
 
@@ -72,6 +70,18 @@ coarse: 12
 
 #How many rotations to make a full circle in Fine adjustment mode
 fine: 120
+
+# (NEW) Set the default gravity value that an armorstand spawns
+#       in as. False = no Gravity. True = Gravity.
+defaultGravitySetting: false
+
+# Set a server limit on the Size of an ArmorStand
+# NOte this has been changed to take into account the /attribute command version
+minScaleValue: 0.1
+maxScaleValue: 10
+
+# Set the server limit on the range that a player can reset an ArmorStand
+maxResetRange: 10
 
 #Allow the option to toggle invisibility for ItemFrames and ArmorStand
 #You can either use this or the below permissions to allow visibility changes
@@ -98,9 +108,20 @@ glowingItemFrame: true
 #asedit.head.
 allowedToRetrieveOwnPlayerHead: false
 
+#Limit the number of times that players can get their head on the server
+maxNumberOfHeadRetrievals: 5
+
 #Each time the command is used, the admins will be notified that this has been ran but only
 #if this setting is made true
 adminOnlyNotifications: false
+
+#----------- BLOCKED NAMES
+# Armor stands with the following names will not be able to be edited
+# Use exact name matching (case sensitive)
+enableBlockedNames: false
+blocked-names:
+  - "BlockedArmorStandName"
+  # - "ItemsAdder_furniture"
 
 #Debug Mode - For Development and Support Purposes ONLY!
 # --- Do Not Enable. Will Generate ALOT OF NOISE in your Log Files

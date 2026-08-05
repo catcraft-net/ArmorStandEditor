@@ -19,26 +19,22 @@
 
 package io.github.rypofalem.armorstandeditor.protections;
 
-import io.github.rypofalem.armorstandeditor.api.Protection;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
+import net.kyori.adventure.text.format.NamedTextColor;
+
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-
-/** @Deprecated
- * Plugin has gone unsupported for a while - Might be cleaned up later. **/
 
 public class GriefPreventionProtection implements Protection {
 
     private boolean gpEnabled;
     private GriefPrevention griefPrevention = null;
 
-    /** @Deprecated **/
     public GriefPreventionProtection() {
         gpEnabled = Bukkit.getPluginManager().isPluginEnabled("GriefPrevention");
 
@@ -46,7 +42,7 @@ public class GriefPreventionProtection implements Protection {
         griefPrevention = (GriefPrevention) Bukkit.getPluginManager().getPlugin("GriefPrevention");
     }
 
-    /** @Deprecated **/
+    @Override
     public boolean checkPermission(Block block, Player player) {
         if (!gpEnabled) return true;
         if (player.hasPermission("asedit.ignoreProtection.griefPrevention")) return true;
@@ -59,8 +55,8 @@ public class GriefPreventionProtection implements Protection {
             Material blockMat = block.getType();
 
             if (landClaim != null && landClaim.allowEdit(player) != null && landClaim.allowBuild(player, blockMat) != null) {
-                player.sendMessage(ChatColor.RED + landClaim.allowEdit(player));
-                player.sendMessage(ChatColor.RED + landClaim.allowBuild(player, blockMat));
+                player.sendMessage(NamedTextColor.RED + landClaim.allowEdit(player));
+                player.sendMessage(NamedTextColor.RED + landClaim.allowBuild(player, blockMat));
                 return false;
             }
         } else {

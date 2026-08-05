@@ -22,7 +22,6 @@ package io.github.rypofalem.armorstandeditor.protections;
 import com.griefdefender.api.GriefDefender;
 import com.griefdefender.api.claim.Claim;
 
-import io.github.rypofalem.armorstandeditor.api.Protection;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -39,6 +38,7 @@ public class GriefDefenderProtection implements Protection {
         gdEnabled = Bukkit.getPluginManager().isPluginEnabled("GriefDefender");
     }
 
+    @Override
     public boolean checkPermission(Block block, Player player) {
         if (!gdEnabled) return true;
         if (player.isOp()) return true;
