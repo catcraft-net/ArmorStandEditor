@@ -19,7 +19,6 @@
 
 package io.github.rypofalem.armorstandeditor.protections;
 
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -27,10 +26,11 @@ import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 
-import io.github.rypofalem.armorstandeditor.api.Protection;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+
+import static com.sk89q.worldedit.bukkit.BukkitAdapter.adapt;
 
 public class WorldGuardProtection implements Protection {
     private final boolean wgEnabled;
@@ -44,6 +44,7 @@ public class WorldGuardProtection implements Protection {
         regionQry = regionContainer.createQuery();
     }
 
+    @Override
     public boolean checkPermission(Block block, Player player) {
         if (!wgEnabled) return true;
         if (player.isOp()) return true;
@@ -51,6 +52,6 @@ public class WorldGuardProtection implements Protection {
 
         LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
 
-        return regionQry.testState(BukkitAdapter.adapt(block.getLocation()), localPlayer, Flags.BUILD);
+        return regionQry.testState(adapt(block.getLocation()), localPlayer, Flags.BUILD);
     }
 }
