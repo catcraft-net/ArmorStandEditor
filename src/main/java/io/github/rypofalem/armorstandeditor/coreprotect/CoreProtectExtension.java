@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 public class CoreProtectExtension {
 
     private final ArmorStandEditorPlugin plugin;
-    private final boolean enabled;
+    private volatile boolean enabled;
 
     public CoreProtectExtension(ArmorStandEditorPlugin plugin) {
         this.plugin = plugin;
@@ -23,7 +23,7 @@ public class CoreProtectExtension {
 
     public void logChange(Player player, ArmorStand armorStand, @NotNull ItemStack[] oldContents, @NotNull ItemStack[] newContents) {
         if (!enabled) return;
-        try {// As this is unstable due to being copied from net.coreprotect.listener.player.ArmorStandManipulateListener, it is prone to errors with updates
+        try { // This uses CoreProtect internals and can change between CoreProtect releases.
             if (!Config.getConfig(player.getWorld()).ITEM_TRANSACTIONS) {
                 return;
             }
@@ -41,8 +41,11 @@ public class CoreProtectExtension {
             }
 
             PlayerInteractEntityListener.queueContainerSpecifiedItems(player.getName(), Material.ARMOR_STAND, new Object[]{oldContents, newContents}, armorStand.getLocation(), false);
-        } catch (Exception exception) {
-            plugin.getSLF4JLogger().warn("Error/Exception while logging with CoreProtect", exception);
+        } catch (LinkageError | Exception exception) {
+            // CoreProtect is optional. Never allow an incompatible CoreProtect build or plugin
+            // classloader change to abort an equipment-menu close and leave the armor stand locked.
+            enabled = false;
+            plugin.getSLF4JLogger().warn("CoreProtect equipment logging is incompatible and has been disabled for this server session", exception);
         }
     }
 }
